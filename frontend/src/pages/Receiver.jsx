@@ -1,6 +1,7 @@
 import { useEffect, useState, useContext } from "react";
 import { UserContext } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
+import { API_URL } from "../config";
 
 export default function Receiver() {
   const { user, token } = useContext(UserContext);
@@ -33,7 +34,7 @@ export default function Receiver() {
   ----------------------------------------------------- */
   const fetchMyRequests = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/receivers", {
+      const res = await fetch(`${API_URL}/api/receivers`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -106,13 +107,16 @@ export default function Receiver() {
      MARK FULFILLED
   ----------------------------------------------------- */
   const handleFulfill = async (id) => {
-    const res = await fetch(`http://localhost:5000/api/receivers/${id}/fulfill`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const res = await fetch(
+      `http://localhost:5000/api/receivers/${id}/fulfill`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
     const data = await res.json();
     if (!data.success) return alert("Error: " + data.message);
@@ -186,10 +190,14 @@ export default function Receiver() {
           }
         >
           <option value="">Select Blood Group</option>
-          <option value="A+">A+</option><option value="A-">A-</option>
-          <option value="B+">B+</option><option value="B-">B-</option>
-          <option value="O+">O+</option><option value="O-">O-</option>
-          <option value="AB+">AB+</option><option value="AB-">AB-</option>
+          <option value="A+">A+</option>
+          <option value="A-">A-</option>
+          <option value="B+">B+</option>
+          <option value="B-">B-</option>
+          <option value="O+">O+</option>
+          <option value="O-">O-</option>
+          <option value="AB+">AB+</option>
+          <option value="AB-">AB-</option>
         </select>
 
         <input
@@ -244,10 +252,19 @@ export default function Receiver() {
             <p>
               <strong>{req.bloodGroupNeeded}</strong> — {req.quantity} Units
             </p>
-            <p><strong>City:</strong> {req.city}</p>
-            <p><strong>Status:</strong> {req.status}</p>
-            <p><strong>Email:</strong> {req.email}</p>
-            <p><strong>Requested On:</strong> {new Date(req.createdAt).toLocaleString()}</p>
+            <p>
+              <strong>City:</strong> {req.city}
+            </p>
+            <p>
+              <strong>Status:</strong> {req.status}
+            </p>
+            <p>
+              <strong>Email:</strong> {req.email}
+            </p>
+            <p>
+              <strong>Requested On:</strong>{" "}
+              {new Date(req.createdAt).toLocaleString()}
+            </p>
 
             <div className="mt-3 flex gap-3">
               <button

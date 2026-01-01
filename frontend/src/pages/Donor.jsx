@@ -1,6 +1,7 @@
 import { useEffect, useState, useContext } from "react";
 import { UserContext } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
+import { API_URL } from "../config"; 
 
 export default function Donor() {
   const [formData, setFormData] = useState({
@@ -25,11 +26,16 @@ export default function Donor() {
 
   // fetch only user's donations
   const fetchMyDonations = async () => {
-    const res = await fetch("http://localhost:5000/api/donors", {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    const data = await res.json();
-    setMyDonations(data);
+    try {
+      const res = await fetch(`${API_URL}/api/donors`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const data = await res.json();
+      setMyDonations(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.log("Donation fetch error:", err);
+    }
   };
 
   // submit donation
@@ -40,7 +46,7 @@ export default function Donor() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(formData),
     });
@@ -68,10 +74,10 @@ export default function Donor() {
 
     await fetch(`http://localhost:5000/api/donors/${id}`, {
       method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` }
+      headers: { Authorization: `Bearer ${token}` },
     });
 
-    setMyDonations(myDonations.filter(d => d._id !== id));
+    setMyDonations(myDonations.filter((d) => d._id !== id));
   };
 
   useEffect(() => {
@@ -85,8 +91,10 @@ export default function Donor() {
       </h1>
 
       {/* Donor Form */}
-      <form onSubmit={handleSubmit} className="mt-8 bg-white shadow p-6 rounded-lg space-y-3">
-
+      <form
+        onSubmit={handleSubmit}
+        className="mt-8 bg-white shadow p-6 rounded-lg space-y-3"
+      >
         <input
           type="text"
           placeholder="Your Name"
@@ -99,14 +107,20 @@ export default function Donor() {
         <select
           className="border p-3 rounded w-full"
           value={formData.bloodGroup}
-          onChange={(e) => setFormData({ ...formData, bloodGroup: e.target.value })}
+          onChange={(e) =>
+            setFormData({ ...formData, bloodGroup: e.target.value })
+          }
           required
         >
           <option value="">Select Blood Group</option>
-          <option value="A+">A+</option><option value="A-">A-</option>
-          <option value="B+">B+</option><option value="B-">B-</option>
-          <option value="O+">O+</option><option value="O-">O-</option>
-          <option value="AB+">AB+</option><option value="AB-">AB-</option>
+          <option value="A+">A+</option>
+          <option value="A-">A-</option>
+          <option value="B+">B+</option>
+          <option value="B-">B-</option>
+          <option value="O+">O+</option>
+          <option value="O-">O-</option>
+          <option value="AB+">AB+</option>
+          <option value="AB-">AB-</option>
         </select>
 
         <input
@@ -132,7 +146,9 @@ export default function Donor() {
           placeholder="Quantity (Units)"
           className="border p-3 rounded w-full"
           value={formData.quantity}
-          onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
+          onChange={(e) =>
+            setFormData({ ...formData, quantity: e.target.value })
+          }
           required
         />
 
@@ -151,12 +167,24 @@ export default function Donor() {
           <p className="text-gray-500">You haven't donated yet.</p>
         )}
 
-        {myDonations.map(d => (
-          <div key={d._id} className="bg-white shadow p-4 rounded-lg mt-3 border-l-4 border-green-600">
-            <p><strong>Blood Group:</strong> {d.bloodGroup} — {d.quantity} Units</p>
-            <p><strong>City:</strong> {d.city}</p>
-            <p><strong>Phone:</strong> {d.phone}</p>
-            <p><strong>Donated On:</strong> {new Date(d.createdAt).toLocaleString()}</p>
+        {myDonations.map((d) => (
+          <div
+            key={d._id}
+            className="bg-white shadow p-4 rounded-lg mt-3 border-l-4 border-green-600"
+          >
+            <p>
+              <strong>Blood Group:</strong> {d.bloodGroup} — {d.quantity} Units
+            </p>
+            <p>
+              <strong>City:</strong> {d.city}
+            </p>
+            <p>
+              <strong>Phone:</strong> {d.phone}
+            </p>
+            <p>
+              <strong>Donated On:</strong>{" "}
+              {new Date(d.createdAt).toLocaleString()}
+            </p>
 
             <button
               onClick={() => deleteDonation(d._id)}
