@@ -133,10 +133,10 @@ router.post("/:receiverId/notify", auth, async (req, res) => {
       <p>❤️ Stay strong,<br>BloodBridge Team</p>
     `;
 
-    const mailSent = await sendMail(receiver.email, "A donor is ready to help 🩸", emailBody);
+    const result = await sendMail(receiver.email, "A donor is ready to help 🩸", emailBody);
 
-    if (!mailSent)
-      return res.status(500).json({ success: false, message: "Failed to send email" });
+    if (!result.success)
+      return res.status(500).json({ success: false, message: "Failed to send email: " + result.error });
 
     res.json({ success: true, message: "Receiver notified successfully!" });
 
