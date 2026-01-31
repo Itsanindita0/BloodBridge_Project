@@ -24,7 +24,13 @@ export default function Receiver() {
      REDIRECT IF USER NOT LOGGED IN
   ----------------------------------------------------- */
   useEffect(() => {
-    if (!user) navigate("/login");
+    if (!user) {
+      navigate("/login");
+    } else {
+      // Auto-fill email if user is logged in
+      setFormData((prev) => ({ ...prev, email: user.email || "" }));
+      fetchMyRequests();
+    }
   }, [user, navigate]);
 
   if (!user) return <p className="text-center mt-10">Redirecting...</p>;
@@ -38,6 +44,7 @@ export default function Receiver() {
         headers: { Authorization: `Bearer ${token}` },
       });
 
+      if (!res.ok) throw new Error("Failed to fetch requests");
       const data = await res.json();
       setMyRequests(Array.isArray(data) ? data : []);
     } catch (err) {

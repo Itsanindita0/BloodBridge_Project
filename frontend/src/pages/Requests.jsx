@@ -22,7 +22,10 @@ export default function Requests() {
   ----------------------------------------------------- */
   useEffect(() => {
     fetch(`${API_URL}/api/receivers/all`)
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error("Server error");
+        return res.json();
+      })
       .then((data) => {
         const list = Array.isArray(data) ? data : [];
         setRequests(list);

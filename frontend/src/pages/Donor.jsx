@@ -10,6 +10,7 @@ export default function Donor() {
     city: "",
     phone: "",
     quantity: "",
+    email: "",
   });
 
   const [myDonations, setMyDonations] = useState([]);
@@ -22,6 +23,8 @@ export default function Donor() {
     if (!user) {
       navigate("/login");
     } else {
+      // Auto-fill email if user is logged in
+      setFormData((prev) => ({ ...prev, email: user.email || "" }));
       fetchMyDonations();
     }
   }, [user, navigate]);
@@ -33,6 +36,7 @@ export default function Donor() {
         headers: { Authorization: `Bearer ${token}` },
       });
 
+      if (!res.ok) throw new Error("Failed to fetch donations");
       const data = await res.json();
       setMyDonations(Array.isArray(data) ? data : []);
     } catch (err) {
@@ -44,29 +48,34 @@ export default function Donor() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const res = await fetch(`${API_URL}/api/donors`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(formData),
-    });
-
-    const data = await res.json();
-
-    if (data.success) {
-      alert("Thank you! Your donation will help save lives ❤️");
-      fetchMyDonations(); // refresh list
-      setFormData({
-        name: "",
-        bloodGroup: "",
-        city: "",
-        phone: formData.phone,
-        quantity: "",
+    try {
+      const res = await fetch(`${API_URL}/api/donors`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(formData),
       });
-    } else {
-      alert("Error: " + data.error);
+
+      const data = await res.json();
+
+      if (data.success) {
+        alert("Thank you! Your donation will help save lives ❤️");
+        fetchMyDonations(); // refresh list
+        setFormData({
+          name: "",
+          bloodGroup: "",
+          city: "",
+          phone: formData.phone,
+          quantity: "",
+          email: formData.email, // keep email
+        });
+      } else {
+        alert("Error: " + (data.error || data.message || "Unknown error"));
+      }
+    } catch (err) {
+      alert("Failed to submit donation. Please check your connection.");
     }
   };
 
@@ -99,6 +108,15 @@ export default function Donor() {
           className="border p-3 rounded w-full"
           value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          required
+        />
+
+        <input
+          type="email"
+          placeholder="Your Email"
+          className="border p-3 rounded w-full"
+          value={formData.email}
+          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
           required
         />
 
