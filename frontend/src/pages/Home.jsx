@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { API_URL } from "../config"; 
+import { API_URL } from "../config";
 import {
   PieChart,
   Pie,
@@ -59,8 +59,8 @@ export default function Home() {
           backgroundImage: `url("https://images.unsplash.com/photo-1584515933487-779824d29309?auto=format&fit=crop&w=1200&q=60")`,
         }}
       >
-        <div className="bg-black/50 w-full h-full py-28 px-6 md:px-20">
-          <h1 className="text-5xl md:text-6xl font-bold mb-4">
+        <div className="bg-black/50 w-full h-full py-20 px-6 md:py-28 md:px-20">
+          <h1 className="text-4xl md:text-6xl font-bold mb-4">
             Donate <span className="text-red-500">Blood</span>, Save{" "}
             <span className="text-red-500">Lives</span> ❤️
           </h1>
@@ -81,7 +81,7 @@ export default function Home() {
             </a>
           </div>
 
-          <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl">
+          <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto md:mx-0">
             <div className="bg-white/90 rounded-xl shadow p-6 text-center text-red-600 font-bold">
               <p className="text-4xl">500k+</p>
               <p>Lives Saved</p>
