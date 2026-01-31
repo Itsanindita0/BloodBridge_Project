@@ -36,7 +36,7 @@ export default function Requests() {
   const findDonors = async (receiverId) => {
     try {
       const res = await fetch(
-        `http://localhost:5000/api/receivers/match/${receiverId}`
+        `${API_URL}/api/receivers/match/${receiverId}`
       );
       const data = await res.json();
 
@@ -66,7 +66,7 @@ export default function Requests() {
 
     try {
       const res = await fetch(
-        `http://localhost:5000/api/receivers/${receiverId}/notify`,
+        `${API_URL}/api/receivers/${receiverId}/notify`,
         {
           method: "POST",
           headers: { Authorization: `Bearer ${token}` },

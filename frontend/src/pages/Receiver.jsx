@@ -52,8 +52,8 @@ export default function Receiver() {
     e.preventDefault();
 
     const url = editingId
-      ? `http://localhost:5000/api/receivers/${editingId}`
-      : `http://localhost:5000/api/receivers`;
+      ? `${API_URL}/api/receivers/${editingId}`
+      : `${API_URL}/api/receivers`;
 
     const method = editingId ? "PATCH" : "POST";
 
@@ -95,7 +95,7 @@ export default function Receiver() {
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this request?")) return;
 
-    await fetch(`http://localhost:5000/api/receivers/${id}`, {
+    await fetch(`${API_URL}/api/receivers/${id}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -108,7 +108,7 @@ export default function Receiver() {
   ----------------------------------------------------- */
   const handleFulfill = async (id) => {
     const res = await fetch(
-      `http://localhost:5000/api/receivers/${id}/fulfill`,
+      `${API_URL}/api/receivers/${id}/fulfill`,
       {
         method: "PATCH",
         headers: {
