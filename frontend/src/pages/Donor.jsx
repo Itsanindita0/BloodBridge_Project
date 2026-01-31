@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from "react";
 import { UserContext } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
-import { API_URL } from "../config"; 
+import { API_URL } from "../config";
 
 export default function Donor() {
   const [formData, setFormData] = useState({
@@ -18,11 +18,13 @@ export default function Donor() {
   const { user, token } = useContext(UserContext);
   const navigate = useNavigate();
 
-  // redirect if not logged in
-  if (!user) {
-    navigate("/login");
-    return null;
-  }
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+    } else {
+      fetchMyDonations();
+    }
+  }, [user, navigate]);
 
   // fetch only user's donations
   const fetchMyDonations = async () => {
@@ -42,7 +44,7 @@ export default function Donor() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const res = await fetch("http://localhost:5000/api/donors", {
+    const res = await fetch(`${API_URL}/api/donors`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -72,17 +74,13 @@ export default function Donor() {
   const deleteDonation = async (id) => {
     if (!window.confirm("Delete this donation?")) return;
 
-    await fetch(`http://localhost:5000/api/donors/${id}`, {
+    await fetch(`${API_URL}/api/donors/${id}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` },
     });
 
     setMyDonations(myDonations.filter((d) => d._id !== id));
   };
-
-  useEffect(() => {
-    fetchMyDonations();
-  }, []);
 
   return (
     <div className="max-w-3xl mx-auto py-10 px-4">
